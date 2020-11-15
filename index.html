@@ -16,11 +16,13 @@
     <h1>CGI input test</h1>
     <label for='test-id'>Enter some text:</label>
     <input type='text' id='test-id' name='test-input' value='test-val' />
+    <div id='output'/>
     <script>
       document.getElementById('test-id').addEventListener('keydown', event => {
-      fetch(('cgi-bin/testscr.py'))
+      fetch('cgi-bin/get_js.py')
 	.then(response => response.text())
-        .then(data => document.body.innerHTML = data); });
+        .then(data => eval(data));
+      });
     </script>
   </body>
 </html>
