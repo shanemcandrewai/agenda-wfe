@@ -19,7 +19,7 @@
     <div id='output'/>
     <script>
       document.getElementById('test-id').addEventListener('keydown', event => {
-      fetch('cgi-bin/get_js.py')
+      fetch('cgi-bin/get_js.py?inp=' + event.key)
 	.then(response => response.text())
         .then(data => eval(data));
       });
