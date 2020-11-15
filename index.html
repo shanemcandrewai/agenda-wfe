@@ -7,9 +7,6 @@
       html {
 	font-family: sans-serif;
       }
-      code {
-	font-family: monospace;
-      }
     </style>
   </head>
   <body>
@@ -17,8 +14,9 @@
     <label for='test-id'>Enter some text:</label>
     <input type='text' id='test-id' name='test-input' value='test-val' />
     <script>
+      console.log('index.html')
       document.getElementById('test-id').addEventListener('keydown', event => {
-      fetch(('cgi-bin/testscr.py'))
+      fetch(('cgi-bin/getpage.py'))
 	.then(response => response.text())
         .then(data => document.body.innerHTML = data); });
     </script>
