@@ -1,16 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang='en'>
   <head>
-    <title>Markdown to HTML</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="styles/style.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/showdown@1.9.1/dist/showdown.min.js"></script>
+    <title>CGI input test</title>
+    <meta charset='UTF-8'>
+    <style>
+      html {
+	font-family: sans-serif;
+      }
+      code {
+	font-family: monospace;
+      }
+    </style>
   </head>
   <body>
-    <input type="text" id="test-id" name="test-input" value="test-val" />
+    <h1>CGI input test</h1>
+    <label for='test-id'>Enter some text:</label>
+    <input type='text' id='test-id' name='test-input' value='test-val' />
     <script>
+      document.getElementById('test-id').addEventListener('keydown', event => {
+      fetch(('cgi-bin/testscr.py'))
+	.then(response => response.text())
+        .then(data => document.body.innerHTML = data); });
     </script>
   </body>
 </html>
