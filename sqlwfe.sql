@@ -1,6 +1,0 @@
-PRAGMA foreign_keys=OFF;
-BEGIN TRANSACTION;
-CREATE TABLE IF NOT EXISTS autocom(inp text primary key, out text);
-INSERT OR REPLACE INTO autocom VALUES('s','SELECT');
-INSERT OR REPLACE INTO autocom VALUES('i','INSERT');
-COMMIT;
