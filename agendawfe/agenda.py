@@ -7,10 +7,10 @@ from flask import request
 from flask import url_for
 from werkzeug.exceptions import abort
 
-from sqlwfe.auth import login_required
-from sqlwfe.db import get_db
+from agendawfe.auth import login_required
+from agendawfe.db import get_db
 
-bp = Blueprint("blog", __name__)
+bp = Blueprint("agenda", __name__)
 
 
 @bp.route("/")
@@ -23,7 +23,7 @@ def index():
         " FROM post p JOIN user u ON p.author_id = u.id"
         " ORDER BY created DESC"
     ).fetchall()
-    return render_template("blog/index.html", posts=posts)
+    return render_template("agenda/index.html", posts=posts)
 
 
 def get_post(id, check_author=True):
@@ -79,9 +79,9 @@ def create():
                 (title, body, g.user["id"]),
             )
             db.commit()
-            return redirect(url_for("blog.index"))
+            return redirect(url_for("agenda.index"))
 
-    return render_template("blog/create.html")
+    return render_template("agenda/create.html")
 
 
 @bp.route("/<int:id>/update", methods=("GET", "POST"))
@@ -106,9 +106,9 @@ def update(id):
                 "UPDATE post SET title = ?, body = ? WHERE id = ?", (title, body, id)
             )
             db.commit()
-            return redirect(url_for("blog.index"))
+            return redirect(url_for("agenda.index"))
 
-    return render_template("blog/update.html", post=post)
+    return render_template("agenda/update.html", post=post)
 
 
 @bp.route("/<int:id>/delete", methods=("POST",))
@@ -123,4 +123,4 @@ def delete(id):
     db = get_db()
     db.execute("DELETE FROM post WHERE id = ?", (id,))
     db.commit()
-    return redirect(url_for("blog.index"))
+    return redirect(url_for("agenda.index"))
