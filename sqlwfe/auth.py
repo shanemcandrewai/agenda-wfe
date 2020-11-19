@@ -74,6 +74,7 @@ def register():
                 (username, generate_password_hash(password)),
             )
             db.commit()
+            flash('User ' + username + ' successfully created. Please log in')
             return redirect(url_for("auth.login"))
 
         flash(error)
