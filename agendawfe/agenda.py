@@ -18,11 +18,11 @@ bp = Blueprint("agenda", __name__)
 def index():
     """Show all the posts, most recent first."""
     db = get_db()
-    posts = db.execute(
-        "SELECT p.id, title, body, created, author_id, username"
-        " FROM post p JOIN user u ON p.author_id = u.id"
-        " ORDER BY created DESC"
-    ).fetchall()
+    sql = ("SELECT p.id, title, body, created, author_id, username" + 
+          " FROM post p JOIN user u ON p.author_id = u.id" +
+          " where u.id = "  + str(g.user['id']) +
+          " ORDER BY created DESC")
+    posts = db.execute(sql).fetchall()
     return render_template("agenda/index.html", posts=posts)
 
 
