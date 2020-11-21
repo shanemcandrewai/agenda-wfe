@@ -32,5 +32,8 @@
 
     import agendawfe
     application = agendawfe.create_app()
+#### Enable HTTPS
+1. Force HTTS: Enabled
+2. Reload web app
 ### Browse the application
     http://127.0.0.1:5000/
