@@ -1,11 +1,13 @@
 import os
-
+from pathlib import Path
 from flask import Flask
 
 
 def create_app(test_config=None):
     """Create and configure an instance of the Flask application."""
     app = Flask(__name__, instance_relative_config=True)
+    # ensure the instance folder exists
+    p = Path(app.instance_path).mkdir(exist_ok=True)
     app.config.from_mapping(
         # a default secret that should be overridden by instance config
         SECRET_KEY="dev",
@@ -19,12 +21,6 @@ def create_app(test_config=None):
     else:
         # load the test config if passed in
         app.config.update(test_config)
-
-    # ensure the instance folder exists
-    try:
-        os.makedirs(app.instance_path)
-    except OSError:
-        pass
 
     @app.route("/hello")
     def hello():
