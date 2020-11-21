@@ -22,9 +22,8 @@ def create_app(test_config=None):
             app.config.from_pyfile("config.py")
         except OSError as e:
             with open(Path(p, 'config.py'), 'w') as f:
-                f.write('SECRET_KEY = ' + app.config['SECRET_KEY'] + '\n' + 'DATABASE = ' + app.config['DATABASE'])
-
-
+                f.write('SECRET_KEY = ' + app.config['SECRET_KEY'] + '\n' +
+                        "DATABASE = '" + app.config['DATABASE'] + "'")
     else:
         # load the test config if passed in
         app.config.update(test_config)
