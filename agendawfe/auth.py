@@ -1,3 +1,4 @@
+''' agendawfe model '''
 import functools
 
 from flask import Blueprint
@@ -54,7 +55,7 @@ def register():
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
-        db = get_db()
+        db_connection = get_db()
         error = None
 
         if not username:
@@ -62,7 +63,7 @@ def register():
         elif not password:
             error = "Password is required."
         elif (
-            db.execute("SELECT id FROM user WHERE username = ?", (username,)).fetchone()
+            db_connection.execute("SELECT id FROM user WHERE username = ?", (username,)).fetchone()
             is not None
         ):
             error = f"User {username} is already registered."
@@ -70,11 +71,11 @@ def register():
         if error is None:
             # the name is available, store it in the database and go to
             # the login page
-            db.execute(
+            db_connection.execute(
                 "INSERT INTO user (username, password) VALUES (?, ?)",
                 (username, generate_password_hash(password)),
             )
-            db.commit()
+            db_connection.commit()
             flash('User ' + username + ' successfully created. Please log in')
             return redirect(url_for("auth.login"))
 
@@ -89,9 +90,9 @@ def login():
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
-        db = get_db()
+        db_connection = get_db()
         error = None
-        user = db.execute(
+        user = db_connection.execute(
             "SELECT * FROM user WHERE username = ?", (username,)
         ).fetchone()
 

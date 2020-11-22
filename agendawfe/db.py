@@ -1,5 +1,5 @@
+''' Database access '''
 import sqlite3
-
 import click
 from flask import current_app
 from flask import g
@@ -20,22 +20,24 @@ def get_db():
     return g.db
 
 
-def close_db(e=None):
+def close_db(exception=None):
     """If this request connected to the database, close the
     connection.
     """
-    db = g.pop("db", None)
+    if exception is not None:
+        print(exception)
+    request_db = g.pop("db", None)
 
-    if db is not None:
-        db.close()
+    if request_db is not None:
+        request_db.close()
 
 
 def init_db():
     """Clear existing data and create new tables."""
-    db = get_db()
+    request_db = get_db()
 
-    with current_app.open_resource("schema.sql") as f:
-        db.executescript(f.read().decode("utf8"))
+    with current_app.open_resource("schema.sql") as schema_fo:
+        request_db.executescript(schema_fo.read().decode("utf8"))
 
 
 @click.command("init-db")

@@ -1,3 +1,4 @@
+''' agendawfe controller '''
 from flask import Blueprint
 from flask import flash
 from flask import g
@@ -17,16 +18,16 @@ bp = Blueprint("agenda", __name__)
 @login_required
 def index():
     """Show all the posts, most recent first."""
-    db = get_db()
-    sql = ("SELECT p.id, title, body, created, author_id, username" + 
+    db_connection = get_db()
+    sql = ("SELECT p.id, title, body, created, author_id, username" +
           " FROM post p JOIN user u ON p.author_id = u.id" +
           " where u.id = "  + str(g.user['id']) +
           " ORDER BY created DESC")
-    posts = db.execute(sql).fetchall()
+    posts = db_connection.execute(sql).fetchall()
     return render_template("agenda/index.html", posts=posts)
 
 
-def get_post(id, check_author=True):
+def get_post(agenda_item_id, check_author=True):
     """Get a post and its author by id.
 
     Checks that the id exists and optionally that the current user is
@@ -44,7 +45,7 @@ def get_post(id, check_author=True):
             "SELECT p.id, title, body, created, author_id, username"
             " FROM post p JOIN user u ON p.author_id = u.id"
             " WHERE p.id = ?",
-            (id,),
+            (agenda_item_id,),
         )
         .fetchone()
     )
@@ -73,12 +74,12 @@ def create():
         if error is not None:
             flash(error)
         else:
-            db = get_db()
-            db.execute(
+            db_connection = get_db()
+            db_connection.execute(
                 "INSERT INTO post (title, body, author_id) VALUES (?, ?, ?)",
                 (title, body, g.user["id"]),
             )
-            db.commit()
+            db_connection.commit()
             return redirect(url_for("agenda.index"))
 
     return render_template("agenda/create.html")
@@ -101,11 +102,11 @@ def update(id):
         if error is not None:
             flash(error)
         else:
-            db = get_db()
-            db.execute(
+            db_connection = get_db()
+            db_connection.execute(
                 "UPDATE post SET title = ?, body = ? WHERE id = ?", (title, body, id)
             )
-            db.commit()
+            db_connection.commit()
             return redirect(url_for("agenda.index"))
 
     return render_template("agenda/update.html", post=post)
@@ -120,7 +121,7 @@ def delete(id):
     author of the post.
     """
     get_post(id)
-    db = get_db()
-    db.execute("DELETE FROM post WHERE id = ?", (id,))
-    db.commit()
+    db_connection = get_db()
+    db_connection.execute("DELETE FROM post WHERE id = ?", (id,))
+    db_connection.commit()
     return redirect(url_for("agenda.index"))

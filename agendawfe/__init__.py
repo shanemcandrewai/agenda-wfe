@@ -1,14 +1,15 @@
+''' Initialize application factory package '''
 import os
 from pathlib import Path
 from flask import Flask
-
+from agendawfe import db
+from agendawfe import auth, agenda
 
 def create_app(test_config=None):
     """Create and configure an instance of the Flask application."""
     app = Flask(__name__, instance_relative_config=True)
     # ensure the instance folder exists
-    p = Path(app.instance_path)
-    p.mkdir(exist_ok=True)
+    Path(app.instance_path).mkdir(exist_ok=True)
     app.config.from_mapping(
         # a default secret that should be overridden by instance config
         SECRET_KEY=str(os.urandom(16)),
@@ -20,10 +21,10 @@ def create_app(test_config=None):
         # load the instance config, if it exists, when not testing
         try:
             app.config.from_pyfile("config.py")
-        except OSError as e:
-            with open(Path(p, 'config.py'), 'w') as f:
-                f.write('SECRET_KEY = ' + app.config['SECRET_KEY'] + '\n' +
-                        "DATABASE = '" + app.config['DATABASE'] + "'")
+        except OSError:
+            with open(Path(app.instance_path, 'config.py'), 'w') as config_fo:
+                config_fo.write('SECRET_KEY = ' + app.config['SECRET_KEY'] + '\n' +
+                        "DATABASE = '" + app.config['DATABASE'] + "'\n")
     else:
         # load the test config if passed in
         app.config.update(test_config)
@@ -33,13 +34,8 @@ def create_app(test_config=None):
         return "Hello, World!"
 
     # register the database commands
-    from agendawfe import db
-
     db.init_app(app)
-
     # apply the blueprints to the app
-    from agendawfe import auth, agenda
-
     app.register_blueprint(auth.bp)
     app.register_blueprint(agenda.bp)
 
