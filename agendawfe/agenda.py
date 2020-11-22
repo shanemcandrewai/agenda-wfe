@@ -1,5 +1,6 @@
 ''' agendawfe controller '''
 from flask import Blueprint
+from flask import current_app
 from flask import flash
 from flask import g
 from flask import redirect
@@ -8,13 +9,10 @@ from flask import request
 from flask import url_for
 from werkzeug.exceptions import abort
 
-from agendawfe.auth import login_required
-from agendawfe.db import get_db
+from auth import login_required
+from db import get_db
 
-bp = Blueprint("agenda", __name__)
-
-
-@bp.route("/")
+@current_app.route("/")
 @login_required
 def index():
     """Show all the posts, most recent first."""
