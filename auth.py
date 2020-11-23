@@ -1,8 +1,9 @@
 """ authentication """
-import flask
-import werkzeug
-import db
 import functools
+import flask
+from werkzeug.security import check_password_hash
+from werkzeug.security import generate_password_hash
+import db
 
 def login_required(view):
     """View decorator that redirects anonymous users to the login page."""
@@ -52,7 +53,7 @@ def register():
             # the login page
             db_connection.execute(
                 "INSERT INTO user (username, password) VALUES (?, ?)",
-                (username, werkzeug.security.generate_password_hash(password)),
+                (username, generate_password_hash(password)),
             )
             db_connection.commit()
             flask.flash('User ' + username + ' successfully created. Please log in')
@@ -77,7 +78,7 @@ def login():
 
         if user is None:
             error = "Incorrect username."
-        elif not werkzeug.security.check_password_hash(user["password"], password):
+        elif not check_password_hash(user["password"], password):
             error = "Incorrect password."
 
         if error is None:

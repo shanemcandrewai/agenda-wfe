@@ -1,5 +1,4 @@
 """ Agenda web front end """
-import functools
 import os
 from pathlib import Path
 import flask

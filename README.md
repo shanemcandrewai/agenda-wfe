@@ -31,7 +31,7 @@
 ### Pythonanywhere.com
     https://www.pythonanywhere.com/user/shanem/webapps/#tab_id_shanem_pythonanywhere_com
 #### Source code
-    /home/shanem/agenda-wfe/agenda_wfe.py
+    /home/shanem/agenda-wfe
 #### Working directory
     /home/shanem/agenda-wfe
 #### WSGI configuration file
