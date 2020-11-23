@@ -25,7 +25,7 @@ def load_logged_in_user():
             db.get_db().execute("SELECT * FROM user WHERE id = ?", (user_id,)).fetchone()
         )
 
-#@current_app.route("/register", methods=("GET", "POST"))
+@login_required
 def register():
     """Register a new user.
 
@@ -64,7 +64,6 @@ def register():
     return flask.render_template("auth/register.html")
 
 
-#@app.route("/login", methods=("GET", "POST"))
 def login():
     """Log in a registered user by adding the user id to the session."""
     if flask.request.method == "POST":
@@ -92,7 +91,6 @@ def login():
     return flask.render_template("auth/login.html")
 
 
-#@app.route("/logout")
 def logout():
     """Clear the current session, including the stored user id."""
     flask.session.clear()
