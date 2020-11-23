@@ -14,6 +14,8 @@
     . ./venv/bin/activate
 ##### Windows
     venv\Scripts\activate
+#### Ensure pip, setuptools, and wheel are up to date
+    python -m pip install --upgrade pip setuptools wheel
 #### From with the virtual environment
 ##### Install Flask
     pip install Flask
