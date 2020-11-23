@@ -31,15 +31,6 @@ app.add_url_rule('/login', 'auth.login', auth.login, methods=("GET", "POST"))
 app.add_url_rule('/register', 'auth.register', auth.register, methods=("GET", "POST"))
 app.add_url_rule('/logout', 'auth.logout', auth.logout)
 
-def login_required(view):
-    """View decorator that redirects anonymous users to the login page."""
-    @functools.wraps(view)
-    def wrapped_view(**kwargs):
-        if flask.g.user is None:
-            return flask.redirect(flask.url_for('auth.login'))
-        return view(**kwargs)
-    return wrapped_view
-
 @app.before_request
 def load_logged_in_user():
     """If a user id is stored in the session, load the user object from
@@ -54,7 +45,7 @@ def load_logged_in_user():
         )
 
 @app.route("/")
-@login_required
+@auth.login_required
 def index():
     """Show all the posts, most recent first."""
     db_connection = db.get_db()
@@ -99,7 +90,7 @@ def get_post(agenda_item_id, check_author=True):
 
 
 @app.route("/create", methods=("GET", "POST"))
-@login_required
+@auth.login_required
 def create():
     """Create a new post for the current user."""
     if flask.request.method == "POST":
@@ -125,7 +116,7 @@ def create():
 
 
 @app.route("/<int:agenda_id>/update", methods=("GET", "POST"))
-@login_required
+@auth.login_required
 def update(agenda_id):
     """Update a post if the current user is the author."""
     post = get_post(agenda_id)
@@ -152,7 +143,7 @@ def update(agenda_id):
 
 
 @app.route("/<int:agenda_id>/delete", methods=("POST",))
-@login_required
+@auth.login_required
 def delete(agenda_id):
     """Delete a post.
 

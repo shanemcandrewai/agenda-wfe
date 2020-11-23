@@ -2,6 +2,16 @@
 import flask
 import werkzeug
 import db
+import functools
+
+def login_required(view):
+    """View decorator that redirects anonymous users to the login page."""
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+        if flask.g.user is None:
+            return flask.redirect(flask.url_for('auth.login'))
+        return view(**kwargs)
+    return wrapped_view
 
 def load_logged_in_user():
     """If a user id is stored in the session, load the user object from
