@@ -1,22 +1,72 @@
-''' agendawfe controller '''
-from flask import Blueprint
-from flask import current_app
-from flask import flash
+""" Agenda web front end """
+import functools
+import os
+from pathlib import Path
+from flask import Flask
 from flask import g
+from flask import session
 from flask import redirect
+from flask import url_for
 from flask import render_template
 from flask import request
-from flask import url_for
-from werkzeug.exceptions import abort
+import db
+import auth
 
-from auth import login_required
-from db import get_db
+app = Flask(__name__, instance_relative_config=True)
 
-@current_app.route("/")
+# load the instance config, if it exists
+try:
+    app.config.from_pyfile("config.py")
+except OSError:
+    # ensure the instance folder exists
+    Path(app.instance_path).mkdir(exist_ok=True)
+    app.config.from_mapping(
+        SECRET_KEY=str(os.urandom(16)),
+        # store the database in the instance folder
+        DATABASE=os.path.join(app.instance_path, "agendawfe.sqlite"),
+    )
+    # create a config file
+    with open(Path(app.instance_path, 'config.py'), 'w') as config_fo:
+        config_fo.write('SECRET_KEY = ' + app.config['SECRET_KEY'] + '\n' +
+                "DATABASE = '" + app.config['DATABASE'] + "'\n")
+
+app.teardown_appcontext(db.close_db)
+
+@app.route("/hello")
+def hello():
+    return "Hello, World!"
+
+app.add_url_rule('/login', 'auth.login', auth.login, methods=("GET", "POST"))
+app.add_url_rule('/register', 'auth.register', auth.register, methods=("GET", "POST"))
+app.add_url_rule('/logout', 'auth.logout', auth.logout)
+
+def login_required(view):
+    """View decorator that redirects anonymous users to the login page."""
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+        if g.user is None:
+            return redirect(url_for('auth.login'))
+        return view(**kwargs)
+    return wrapped_view
+
+@app.before_request
+def load_logged_in_user():
+    """If a user id is stored in the session, load the user object from
+    the database into ``g.user``."""
+    user_id = session.get("user_id")
+
+    if user_id is None:
+        g.user = None
+    else:
+        g.user = (
+            db.get_db().execute("SELECT * FROM user WHERE id = ?", (user_id,)).fetchone()
+        )
+
+@app.route("/")
 @login_required
 def index():
     """Show all the posts, most recent first."""
-    db_connection = get_db()
+    db_connection = db.get_db()
     sql = ("SELECT p.id, title, body, created, author_id, username" +
           " FROM post p JOIN user u ON p.author_id = u.id" +
           " where u.id = "  + str(g.user['id']) +
@@ -38,7 +88,7 @@ def get_post(agenda_item_id, check_author=True):
     :raise 403: if the current user isn't the author
     """
     post = (
-        get_db()
+        db.get_db()
         .execute(
             "SELECT p.id, title, body, created, author_id, username"
             " FROM post p JOIN user u ON p.author_id = u.id"
@@ -57,7 +107,7 @@ def get_post(agenda_item_id, check_author=True):
     return post
 
 
-@bp.route("/create", methods=("GET", "POST"))
+@app.route("/create", methods=("GET", "POST"))
 @login_required
 def create():
     """Create a new post for the current user."""
@@ -72,18 +122,18 @@ def create():
         if error is not None:
             flash(error)
         else:
-            db_connection = get_db()
+            db_connection = db.get_db()
             db_connection.execute(
                 "INSERT INTO post (title, body, author_id) VALUES (?, ?, ?)",
                 (title, body, g.user["id"]),
             )
             db_connection.commit()
-            return redirect(url_for("agenda.index"))
+            return redirect(url_for("index"))
 
     return render_template("agenda/create.html")
 
 
-@bp.route("/<int:id>/update", methods=("GET", "POST"))
+@app.route("/<int:id>/update", methods=("GET", "POST"))
 @login_required
 def update(id):
     """Update a post if the current user is the author."""
@@ -100,7 +150,7 @@ def update(id):
         if error is not None:
             flash(error)
         else:
-            db_connection = get_db()
+            db_connection = db.get_db()
             db_connection.execute(
                 "UPDATE post SET title = ?, body = ? WHERE id = ?", (title, body, id)
             )
@@ -110,7 +160,7 @@ def update(id):
     return render_template("agenda/update.html", post=post)
 
 
-@bp.route("/<int:id>/delete", methods=("POST",))
+@app.route("/<int:id>/delete", methods=("POST",))
 @login_required
 def delete(id):
     """Delete a post.
@@ -119,7 +169,7 @@ def delete(id):
     author of the post.
     """
     get_post(id)
-    db_connection = get_db()
+    db_connection = db.get_db()
     db_connection.execute("DELETE FROM post WHERE id = ?", (id,))
     db_connection.commit()
-    return redirect(url_for("agenda.index"))
+    return redirect(url_for("index"))
