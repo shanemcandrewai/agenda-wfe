@@ -2,20 +2,30 @@
 
 ## Installation
 ### Clone repository
-    git clone https://github.com/shanemcandrewai/agendawfe-repo.git
+    git clone https://github.com/shanemcandrewai/agendawfe.git
 ### Change directory to repository root
 #### Create a virtual enviroment
+##### Linux
     python3.x -m venv venv
+##### Windows
+    py -3 -m venv venv
 #### Activate the virtual environment
+##### Linux
+    . ./venv/bin/activate
+##### Windows
+    venv\Scripts\activate
 #### From with the virtual environment
 ##### Install Flask
     pip install Flask
 ##### Run the application
-    export FLASK_APP=agendawfe
+###### Linux
+    export FLASK_APP=agendawfe.py
     export FLASK_ENV=development
     flask run
-##### Initialise the DB
-    flask init-db
+###### Windows
+    set FLASK_APP=agendawfe.py
+    set FLASK_ENV=development
+    flask run
 ### Pythonanywhere.com
     https://www.pythonanywhere.com/user/shanem/webapps/#tab_id_shanem_pythonanywhere_com
 #### Source code
