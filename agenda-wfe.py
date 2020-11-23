@@ -18,7 +18,7 @@ except OSError:
     app.config.from_mapping(
         SECRET_KEY=str(os.urandom(16)),
         # store the database in the instance folder
-        DATABASE=os.path.join(app.instance_path, "agendawfe.sqlite"),
+        DATABASE=os.path.join(app.instance_path, "agenda-wfe.sqlite"),
     )
     # create a config file
     with open(Path(app.instance_path, 'config.py'), 'w') as config_fo:

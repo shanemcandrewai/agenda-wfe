@@ -2,7 +2,7 @@
 
 ## Installation
 ### Clone repository
-    git clone https://github.com/shanemcandrewai/agendawfe.git
+    git clone https://github.com/shanemcandrewai/agenda-wfe.git
 ### Change directory to repository root
 #### Create a virtual enviroment
 ##### Linux
@@ -19,29 +19,28 @@
     pip install Flask
 ##### Run the application
 ###### Linux
-    export FLASK_APP=agendawfe.py
+    export FLASK_APP=agenda-wfe.py
     export FLASK_ENV=development
     flask run
 ###### Windows
-    set FLASK_APP=agendawfe.py
+    set FLASK_APP=agenda-wfe.py
     set FLASK_ENV=development
     flask run
 ### Pythonanywhere.com
     https://www.pythonanywhere.com/user/shanem/webapps/#tab_id_shanem_pythonanywhere_com
 #### Source code
-    /home/shanem/agendawfe-repo/agendawfe
+    /home/shanem/agenda-wfe
 #### Working directory
-    /home/shanem/agendawfe-repo
+    /home/shanem/agenda-wfe
 #### WSGI configuration file
 ##### /var/www/shanem_pythonanywhere_com_wsgi.py
     import sys
 
-    path = '/home/shanem/agendawfe-repo'
+    path = '/home/shanem/agenda-awfe'
     if path not in sys.path:
 	sys.path.append(path)
 
-    import agendawfe
-    application = agendawfe.create_app()
+    from agenda-wfe import app as application
 #### Enable HTTPS
 1. Force HTTS: Enabled
 2. Reload web app
