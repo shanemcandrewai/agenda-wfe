@@ -2,7 +2,7 @@
 import os
 from pathlib import Path
 import flask
-import werkzeug
+from werkzeug.exceptions import abort
 import db
 import auth
 
@@ -80,13 +80,12 @@ def get_post(agenda_item_id, check_author=True):
     )
 
     if post is None:
-        werkzeug.exceptions.abort(404, f"Post id {id} doesn't exist.")
+        abort(404, f"Post id {id} doesn't exist.")
 
     if check_author and post["author_id"] != flask.g.user["id"]:
-        werkzeug.exceptions.abort(403)
+        abort(403)
 
     return post
-
 
 @app.route("/create", methods=("GET", "POST"))
 @auth.login_required

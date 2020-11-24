@@ -45,7 +45,7 @@ def register():
                 (username, generate_password_hash(password)),
             )
             db_connection.commit()
-            flask.flash('User ' + username + ' successfully created. Please log in')
+            flask.flash('User ' + username + ' successfully created.')
             return flask.redirect(flask.url_for("auth.login"))
 
         flask.flash(error)

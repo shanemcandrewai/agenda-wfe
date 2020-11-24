@@ -13,7 +13,7 @@
     python -m pip install --upgrade pip setuptools wheel
 #### Activate the virtual environment
 ##### Linux
-    . ./venv/bin/activate
+    . venv/bin/activate
 ##### Windows
     venv\Scripts\activate
 #### From with the virtual environment
