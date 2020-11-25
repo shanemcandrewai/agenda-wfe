@@ -1,22 +1,29 @@
-<!doctype html>
-<title>{% block title %}{% endblock %} - Agenda web front end</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-<nav>
-  <h1><a href="{{ url_for('index') }}">Agenda web front end</a></h1>
-  <ul>
-    {% if g.user %}
-      <li><span>{{ g.user['username'] }}</span>
-      <li><a href="{{ url_for('auth.register') }}">Register</a>
-      <li><a href="{{ url_for('auth.logout') }}">Log Out</a>
-    {% endif %}
-  </ul>
-</nav>
-<section class="content">
-  <header>
-    {% block header %}{% endblock %}
-  </header>
-  {% for message in get_flashed_messages() %}
-    <div class="flash">{{ message }}</div>
-  {% endfor %}
-  {% block content %}{% endblock %}
-</section>
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{% block title %}{% endblock %} - Agenda web front end</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <nav>
+      <h1><a href="{{ url_for('index') }}">Agenda web front end</a></h1>
+      <ul>
+	{% if g.user %}
+	<li><span>{{ g.user['username'] }}</span>
+	  <li><a href="{{ url_for('auth.register') }}">Register</a>
+	    <li><a href="{{ url_for('auth.logout') }}">Log Out</a>
+	      {% endif %}
+      </ul>
+    </nav>
+    <section class="content">
+      <header>
+	{% block header %}{% endblock %}
+      </header>
+      {% for message in get_flashed_messages() %}
+      <div class="flash">{{ message }}</div>
+      {% endfor %}
+      {% block content %}{% endblock %}
+    </section>
+  </body>
+</html>
