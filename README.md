@@ -28,6 +28,8 @@
     set FLASK_APP=agenda_wfe.py
     set FLASK_ENV=development
     flask run
+### Browse the application
+    http://localhost:5000/
 ### Pythonanywhere.com
     https://www.pythonanywhere.com/user/shanem/webapps/#tab_id_shanem_pythonanywhere_com
 #### Source code
@@ -46,5 +48,3 @@
 #### Enable HTTPS
 1. Force HTTS: Enabled
 2. Reload web app
-### Browse the application
-    http://127.0.0.1:5000/

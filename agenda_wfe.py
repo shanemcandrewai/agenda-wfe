@@ -50,9 +50,9 @@ def index():
     db_connection = db.get_db()
     sql = ("SELECT p.id, title, body, created, author_id, username" +
           " FROM post p JOIN user u ON p.author_id = u.id" +
-          " where u.id = "  + str(flask.g.user['id']) +
+          " where u.id = ?"
           " ORDER BY created DESC")
-    posts = db_connection.execute(sql).fetchall()
+    posts = db_connection.execute(sql, (flask.g.user['id'],)).fetchall()
     return flask.render_template("agenda/index.html", posts=posts)
 
 
