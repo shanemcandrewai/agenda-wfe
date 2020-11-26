@@ -3,6 +3,7 @@ import functools
 import flask
 from werkzeug.security import check_password_hash
 from werkzeug.security import generate_password_hash
+from werkzeug import exceptions
 import db
 
 def login_required(view):
@@ -31,19 +32,17 @@ def register():
             error = "Username is required."
         elif not password:
             error = "Password is required."
-        elif (
-            db_connection.execute("SELECT id FROM user WHERE username = ?", (username,)).fetchone()
-            is not None
-        ):
-            error = f"User {username} is already registered."
+        else:
+            c = db_connection.cursor()
+            c.execute("SELECT id FROM user WHERE username = ?", (username,))
+            if c.fetchone() is not None:
+                error = f"User {username} is already registered."
 
         if error is None:
             # the name is available, store it in the database and go to
             # the login page
-            db_connection.execute(
-                "INSERT INTO user (username, password) VALUES (?, ?)",
-                (username, generate_password_hash(password)),
-            )
+            c.execute("INSERT INTO user (username, password) VALUES (?, ?)",
+                      (username, generate_password_hash(password)))
             db_connection.commit()
             flask.flash('User ' + username + ' successfully created.')
             return flask.redirect(flask.url_for("auth.login"))
@@ -51,6 +50,14 @@ def register():
         flask.flash(error)
 
     return flask.render_template("auth/register.html")
+
+def login_google():
+    """ Google sign-in for websites """
+    try:
+        username = flask.request.form["email"]
+    except exceptions.BadRequest as e:
+        pass
+
 
 def login():
     """Log in a registered user by adding the user id to the session."""
@@ -60,8 +67,8 @@ def login():
         db_connection = db.get_db()
         error = None
         user = db_connection.execute(
-            "SELECT * FROM user WHERE username = ?", (username,)
-        ).fetchone()
+                "SELECT * FROM user WHERE username = ?", (username,)
+                ).fetchone()
 
         if user is None:
             error = "Incorrect username."
