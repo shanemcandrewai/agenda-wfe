@@ -1,7 +1,7 @@
 """ Database access """
 import sqlite3
-import flask
 from pathlib import Path
+import flask
 
 def get_db():
     """Connect to the application's configured database. The connection
@@ -12,8 +12,12 @@ def get_db():
         flask.g.db = sqlite3.connect(
             Path(flask.current_app.instance_path,
                  flask.current_app.config['DATABASE']),
-                 detect_types=sqlite3.PARSE_DECLTYPES
-        )
+                 detect_types=sqlite3.PARSE_DECLTYPES)
+        cur = flask.g.db.cursor()
+        cur.execute('select count(*) from sqlite_master')
+        if cur.fetchone() == (0,):
+            with flask.current_app.open_resource("schema.sql") as schema_fo:
+                flask.g.db.executescript(schema_fo.read().decode("utf8"))
         flask.g.db.row_factory = sqlite3.Row
     return flask.g.db
 

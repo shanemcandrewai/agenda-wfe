@@ -33,15 +33,15 @@ def register():
         elif not password:
             error = "Password is required."
         else:
-            c = db_connection.cursor()
-            c.execute("SELECT id FROM user WHERE username = ?", (username,))
-            if c.fetchone() is not None:
+            curr = db_connection.cursor()
+            curr.execute("SELECT id FROM user WHERE username = ?", (username,))
+            if curr.fetchone() is not None:
                 error = f"User {username} is already registered."
 
         if error is None:
             # the name is available, store it in the database and go to
             # the login page
-            c.execute("INSERT INTO user (username, password) VALUES (?, ?)",
+            curr.execute("INSERT INTO user (username, password) VALUES (?, ?)",
                       (username, generate_password_hash(password)))
             db_connection.commit()
             flask.flash('User ' + username + ' successfully created.')

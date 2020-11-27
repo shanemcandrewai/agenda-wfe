@@ -22,7 +22,6 @@ except OSError:
     with open(Path(app.instance_path, 'config.py'), 'w') as config_fo:
         config_fo.write('SECRET_KEY = ' + app.config['SECRET_KEY'] + '\n' +
                         'DATABASE = ' + f"'{app.config['DATABASE']}'" + '\n')
-    # create a new intialised DB if none is found
 
 app.teardown_appcontext(db.close_db)
 
@@ -40,7 +39,8 @@ def load_logged_in_user():
         flask.g.user = None
     else:
         flask.g.user = (
-            db.get_db().execute("SELECT * FROM user WHERE id = ?", (user_id,)).fetchone()
+            db.get_db().execute("SELECT * FROM user WHERE id = ?",
+                                (user_id,)).fetchone()
         )
 
 @app.route("/")
