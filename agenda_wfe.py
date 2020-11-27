@@ -17,11 +17,11 @@ except OSError:
     app.config.from_mapping(
         SECRET_KEY=str(os.urandom(16)),
         # store the database in the instance folder
-        DATABASE=os.path.join(app.instance_path, "agenda-wfe.sqlite"))
+        DATABASE='agenda-wfe.sqlite')
     # create a config file
     with open(Path(app.instance_path, 'config.py'), 'w') as config_fo:
         config_fo.write('SECRET_KEY = ' + app.config['SECRET_KEY'] + '\n' +
-                "DATABASE = r'" + app.config['DATABASE'] + "'\n")
+                        'DATABASE = ' + f"'{app.config['DATABASE']}'" + '\n')
     # create a new intialised DB if none is found
 
 app.teardown_appcontext(db.close_db)

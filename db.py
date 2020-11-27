@@ -10,8 +10,9 @@ def get_db():
     """
     if 'db' not in flask.g:
         flask.g.db = sqlite3.connect(
-            Path(app.instance_path, flask.current_app.config['DATABASE']),
-                detect_types=sqlite3.PARSE_DECLTYPES
+            Path(flask.current_app.instance_path,
+                 flask.current_app.config['DATABASE']),
+                 detect_types=sqlite3.PARSE_DECLTYPES
         )
         flask.g.db.row_factory = sqlite3.Row
     return flask.g.db
