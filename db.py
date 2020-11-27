@@ -1,15 +1,17 @@
 """ Database access """
 import sqlite3
 import flask
+from pathlib import Path
 
 def get_db():
     """Connect to the application's configured database. The connection
     is unique for each request and will be reused if this is called
     again.
     """
-    if "db" not in flask.g:
+    if 'db' not in flask.g:
         flask.g.db = sqlite3.connect(
-            flask.current_app.config["DATABASE"], detect_types=sqlite3.PARSE_DECLTYPES
+            Path(app.instance_path, flask.current_app.config['DATABASE']),
+                detect_types=sqlite3.PARSE_DECLTYPES
         )
         flask.g.db.row_factory = sqlite3.Row
     return flask.g.db
