@@ -9,7 +9,12 @@ with conn:
     conn.execute('insert into tab1 select "testdata"')
 @app.route('/')
 def index():
-    conn = sqlite3.connect(app.config['DATABASE'])
     table_data = conn.execute('select * from tab1').fetchall()
-    return f'<!doctype html><meta charset=utf-8><title>Minimal sqlite3 app</title>{table_data}'
+    return f'<!doctype html><meta charset=utf-8><title>Minimal index</title>{table_data}'
 
+@app.route('/create', methods=['POST'))
+def post():
+    return '<!doctype html><meta charset=utf-8><title>Minimal create</title><form method="post"><input name="input" id="input"><input type="submit" value="Save"></form>'
+
+with conn:
+    conn.execute('insert into tab1 select "testdata"')
