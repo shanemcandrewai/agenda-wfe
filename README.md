@@ -19,25 +19,25 @@
 #### From with the virtual environment
 ##### Install Flask
     pip install Flask
-##### Run the application
-###### Linux
+## Run the application
+### Linux
     export FLASK_APP=agenda_wfe.py
     export FLASK_ENV=development
     flask run
-###### Windows
+### Windows
     set FLASK_APP=agenda_wfe.py
     set FLASK_ENV=development
     flask run
-### Browse the application
+## Browse the application
     http://localhost:5000/
-### Pythonanywhere.com
+## Pythonanywhere.com
     https://www.pythonanywhere.com/user/shanem/webapps/#tab_id_shanem_pythonanywhere_com
-#### Source code
+### Source code
     /home/shanem/agenda-wfe
-#### Working directory
+### Working directory
     /home/shanem/agenda-wfe
-#### WSGI configuration file
-##### /var/www/shanem_pythonanywhere_com_wsgi.py
+### WSGI configuration file
+#### /var/www/shanem_pythonanywhere_com_wsgi.py
     import sys
 
     path = '/home/shanem/agenda-awfe'

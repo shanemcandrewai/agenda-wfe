@@ -10,7 +10,7 @@ app = flask.Flask(__name__, instance_relative_config=True)
 
 # load the instance config, if it exists
 try:
-    app.config.from_pyfile("config.py")
+    app.config.from_pyfile('config.py')
 except OSError:
     # ensure the instance folder exists
     Path(app.instance_path).mkdir(exist_ok=True)
@@ -20,40 +20,42 @@ except OSError:
         DATABASE='agenda-wfe.sqlite')
     # create a config file
     with open(Path(app.instance_path, 'config.py'), 'w') as config_fo:
-        config_fo.write('SECRET_KEY = ' + app.config['SECRET_KEY'] + '\n' +
-                        'DATABASE = ' + f"'{app.config['DATABASE']}'" + '\n')
+        config_fo.write(f"SECRET_KEY = {app.config['SECRET_KEY']}\n"
+                        f"DATABASE = '{app.config['DATABASE']}'\n")
 
 app.teardown_appcontext(db.close_db)
 
-app.add_url_rule('/login', 'auth.login', auth.login, methods=("GET", "POST"))
-app.add_url_rule('/register', 'auth.register', auth.register, methods=("GET", "POST"))
+app.add_url_rule('/login', 'auth.login', auth.login, methods=('GET', 'POST'))
+app.add_url_rule('/register', 'auth.register', auth.register, methods=('GET', 'POST'))
 app.add_url_rule('/logout', 'auth.logout', auth.logout)
 
 @app.before_request
 def load_logged_in_user():
     """If a user id is stored in the session, load the user object from
     the database into ``g.user``."""
-    user_id = flask.session.get("user_id")
+    user_id = flask.session.get('user_id')
 
     if user_id is None:
         flask.g.user = None
     else:
-        flask.g.user = (
-            db.get_db().execute("SELECT * FROM user WHERE id = ?",
-                                (user_id,)).fetchone()
-        )
+        flask.g.user = (db.get_db().execute('SELECT * FROM user WHERE id = ?',
+                        (user_id,)).fetchone())
 
 @app.route("/")
 @auth.login_required
 def index():
     """Show all the posts, most recent first."""
-    db_connection = db.get_db()
-    sql = ("SELECT p.id, title, body, created, author_id, username" +
-          " FROM post p JOIN user u ON p.author_id = u.id" +
-          " where u.id = ?"
-          " ORDER BY created DESC")
-    posts = db_connection.execute(sql, (flask.g.user['id'],)).fetchall()
-    return flask.render_template("agenda/index.html", posts=posts)
+    sql = ('SELECT p.id, title, body, created, author_id, username'
+           ' FROM post p JOIN user u ON p.author_id = u.id'
+           ' where u.id = ?'
+           ' ORDER BY created DESC')
+    posts = db.get_db().execute(sql, (flask.g.user['id'],)).fetchall()
+    return flask.render_template('agenda/index.html', posts=posts)
+
+@app.route("/simple")
+def simple():
+    return '<!doctype html><meta charset=utf-8><title>testapp</title><h1>testapp</h1>'
+#    return flask.render_template_string('<!doctype html><meta charset=utf-8><title>testapp</title><h1>testapp</h1>')
 
 
 def get_post(agenda_item_id, check_author=True):
@@ -68,16 +70,11 @@ def get_post(agenda_item_id, check_author=True):
     :raise 404: if a post with the given id doesn't exist
     :raise 403: if the current user isn't the author
     """
-    post = (
-        db.get_db()
-        .execute(
-            "SELECT p.id, title, body, created, author_id, username"
-            " FROM post p JOIN user u ON p.author_id = u.id"
-            " WHERE p.id = ?",
-            (agenda_item_id,),
-        )
-        .fetchone()
-    )
+    sql = ('SELECT p.id, title, body, created, author_id, username'
+           ' FROM post p JOIN user u ON p.author_id = u.id'
+           ' WHERE p.id = ? AND p.author_id = ?')
+    post = db.get_db().execute(sql, (agenda_item_id,
+                                     flask.g.user['id'])).fetchone()
 
     if post is None:
         abort(404, f"Post id {id} doesn't exist.")
