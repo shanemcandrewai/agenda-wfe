@@ -55,8 +55,6 @@ def index():
 @app.route("/simple")
 def simple():
     return '<!doctype html><meta charset=utf-8><title>testapp</title><h1>testapp</h1>'
-#    return flask.render_template_string('<!doctype html><meta charset=utf-8><title>testapp</title><h1>testapp</h1>')
-
 
 def get_post(agenda_item_id, check_author=True):
     """Get a post and its author by id.
