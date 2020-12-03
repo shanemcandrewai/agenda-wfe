@@ -4,10 +4,13 @@ import functools
 app = flask.Flask(__name__)
 with app.app_context():
     app.config.from_mapping(DATABASE='minimal.sqlite', SECRET_KEY='1234')
+#    app.add_url_rule('/favicon.ico',
+#                     flask.redirect(flask.url_for('static', filename='favicon.ico')))
 with sqlite3.connect(app.config['DATABASE']) as conn:
     with open('minimal.sql') as sql_fo:
         sql = sql_fo.read()
     conn.executescript(sql)
+
 
 def login_required(view):
     """View decorator that redirects anonymous users to the login page."""

@@ -2,19 +2,24 @@
 <html lang='en'>
   <head>
     <title>{% block title %}Minimal web front end{% endblock %}</title>
-        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="google-signin-client_id" content="378262702736-tj2e10bmtldlstf8l838moegvbjkbimv.apps.googleusercontent.com">
+    <meta name="google-signin-client_id"
+      content="378262702736-tj2e10bmtldlstf8l838moegvbjkbimv.apps.googleusercontent.com">
     <script src="https://apis.google.com/js/platform.js" async defer></script>
   </head>
   <body>
     <nav>
       <h1><a href="{{ url_for('index') }}">Minimal web front end</a></h1>
       <ul>
-	<li>{% if g.user %} g.user['username'] {% else %} not logged in {% endif %}</li>
-	<li><a href= 'ddd'>uhtt</a></li>
-	  {#	<li><a href="{{ url_for('auth.register') }}">Register</a> #}
-	<li><a href="{{ url_for('logout') }}">Log Out</a></li>
+	{% if g.user %}
+	  <li>{{ g.user['username'] }}</li>
+	  <li><a href="{{ url_for('logout') }}">Log Out</a></li>
+	{% else %}
+	  <li>not logged in</li>
+	  <li><a href="{{ url_for('login') }}">Log In</a></li>
+	{% endif %}</li>
       </ul>
     </nav>
     <section class="content">
